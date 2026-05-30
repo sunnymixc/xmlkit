@@ -17,8 +17,7 @@
           <span>输入</span>
           <a-button size="small" @click="handlePaste">粘贴</a-button>
         </div>
-        <textarea
-          class="editor-textarea"
+        <CodeMirrorEditor
           v-model="input"
           placeholder="在此粘贴 XML 内容..."
         />
@@ -28,10 +27,9 @@
           <span>输出</span>
           <a-button size="small" @click="handleCopy" :disabled="!output">复制</a-button>
         </div>
-        <textarea
-          class="editor-textarea"
+        <CodeMirrorEditor
           v-model="output"
-          readonly
+          read-only
           placeholder="处理结果将显示在这里..."
         />
       </div>
@@ -43,6 +41,7 @@
 import { ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { formatXml, unescapeXml, escapeXml, minifyXml } from '../utils/xml'
+import CodeMirrorEditor from './CodeMirrorEditor.vue'
 
 const input = ref('')
 const output = ref('')
@@ -152,27 +151,5 @@ async function handlePaste() {
   font-size: 13px;
   color: #666;
   flex-shrink: 0;
-}
-
-.editor-textarea {
-  flex: 1;
-  width: 100%;
-  padding: 12px;
-  border: none;
-  outline: none;
-  resize: none;
-  font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #333;
-  background: #fff;
-}
-
-.editor-textarea::placeholder {
-  color: #bbb;
-}
-
-.editor-textarea:focus {
-  background: #fff;
 }
 </style>
