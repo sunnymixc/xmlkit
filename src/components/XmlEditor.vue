@@ -1,36 +1,7 @@
 <template>
   <div class="xml-editor">
-    <a-row :gutter="16" class="editor-row">
-      <a-col :span="12">
-        <div class="panel">
-          <div class="panel-header">
-            <span>输入</span>
-            <a-button size="small" @click="handlePaste">粘贴</a-button>
-          </div>
-          <a-textarea
-            v-model:value="input"
-            :auto-size="{ minRows: 20, maxRows: 30 }"
-            placeholder="在此粘贴 XML 内容..."
-          />
-        </div>
-      </a-col>
-      <a-col :span="12">
-        <div class="panel">
-          <div class="panel-header">
-            <span>输出</span>
-            <a-button size="small" @click="handleCopy" :disabled="!output">复制</a-button>
-          </div>
-          <a-textarea
-            v-model:value="output"
-            :auto-size="{ minRows: 20, maxRows: 30 }"
-            readonly
-            placeholder="处理结果将显示在这里..."
-          />
-        </div>
-      </a-col>
-    </a-row>
-
-    <div class="actions">
+    <div class="toolbar">
+      <h1 class="toolbar-title">XML Kit</h1>
       <a-space>
         <a-button type="primary" @click="handleFormat">格式化</a-button>
         <a-button @click="handleMinify">压缩</a-button>
@@ -38,6 +9,32 @@
         <a-button @click="handleEscape">转义</a-button>
         <a-button danger @click="handleClear">清空</a-button>
       </a-space>
+    </div>
+
+    <div class="editor-body">
+      <div class="panel">
+        <div class="panel-header">
+          <span>输入</span>
+          <a-button size="small" @click="handlePaste">粘贴</a-button>
+        </div>
+        <textarea
+          class="editor-textarea"
+          v-model="input"
+          placeholder="在此粘贴 XML 内容..."
+        />
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span>输出</span>
+          <a-button size="small" @click="handleCopy" :disabled="!output">复制</a-button>
+        </div>
+        <textarea
+          class="editor-textarea"
+          v-model="output"
+          readonly
+          placeholder="处理结果将显示在这里..."
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -104,35 +101,78 @@ async function handlePaste() {
 
 <style scoped>
 .xml-editor {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-.editor-row {
-  min-height: 480px;
-}
-
-.panel {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  flex-shrink: 0;
+}
+
+.toolbar-title {
+  font-size: 20px;
+  color: #1677ff;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.editor-body {
+  display: flex;
+  flex: 1;
+  gap: 0;
+  overflow: hidden;
+}
+
+.panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e8e8e8;
+}
+
+.panel:last-child {
+  border-right: none;
 }
 
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  padding: 6px 12px;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
   color: #666;
+  flex-shrink: 0;
 }
 
-.actions {
-  text-align: center;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
+.editor-textarea {
+  flex: 1;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #333;
+  background: #fff;
+}
+
+.editor-textarea::placeholder {
+  color: #bbb;
+}
+
+.editor-textarea:focus {
+  background: #fff;
 }
 </style>
