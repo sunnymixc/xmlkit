@@ -11,8 +11,8 @@
       </a-space>
     </div>
 
-    <div class="editor-body">
-      <div class="panel">
+    <div class="editor-body" ref="editorBody">
+      <div class="panel panel-left" :style="{ width: leftWidth + '%' }">
         <div class="panel-header">
           <span>输入</span>
           <a-button size="small" @click="handlePaste">粘贴</a-button>
@@ -22,7 +22,8 @@
           placeholder="在此粘贴 XML 内容..."
         />
       </div>
-      <div class="panel">
+      <div class="resize-handle" @mousedown="startResize"></div>
+      <div class="panel panel-right">
         <div class="panel-header">
           <span>输出</span>
           <a-button size="small" @click="handleCopy" :disabled="!output">复制</a-button>
@@ -45,6 +46,35 @@ import CodeMirrorEditor from './CodeMirrorEditor.vue'
 
 const input = ref('')
 const output = ref('')
+const leftWidth = ref(50)
+const editorBody = ref(null)
+
+function startResize(e) {
+  e.preventDefault()
+  const startX = e.clientX
+  const startWidth = leftWidth.value
+  const bodyWidth = editorBody.value.offsetWidth
+
+  document.body.style.userSelect = 'none'
+  document.body.style.cursor = 'col-resize'
+
+  function onMouseMove(e) {
+    const dx = e.clientX - startX
+    let newWidth = startWidth + (dx / bodyWidth) * 100
+    newWidth = Math.max(20, Math.min(80, newWidth))
+    leftWidth.value = newWidth
+  }
+
+  function onMouseUp() {
+    document.removeEventListener('mousemove', onMouseMove)
+    document.removeEventListener('mouseup', onMouseUp)
+    document.body.style.userSelect = ''
+    document.body.style.cursor = ''
+  }
+
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+}
 
 function handleFormat() {
   if (!input.value.trim()) return message.warning('请先输入内容')
@@ -130,14 +160,30 @@ async function handlePaste() {
 }
 
 .panel {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #e8e8e8;
+  overflow: hidden;
 }
 
-.panel:last-child {
+.panel-left {
   border-right: none;
+}
+
+.panel-right {
+  flex: 1;
+  min-width: 0;
+}
+
+.resize-handle {
+  width: 4px;
+  cursor: col-resize;
+  background: #e8e8e8;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.resize-handle:hover {
+  background: #1677ff;
 }
 
 .panel-header {
